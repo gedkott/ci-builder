@@ -3,5 +3,5 @@
         "ci/test-js": "npm test",
         "ci/build-js": "npm build"
     },
-    "githubRepo": "https://gedalia.kott"
+    "githubRepo": "https://github.com/gedkott/ci-builder"
 }

@@ -1,3 +1,5 @@
+var url = require('url');
+
 var GitHubApi = require("github");
 
 var github = new GitHubApi({
@@ -11,17 +13,37 @@ var github = new GitHubApi({
 });
 
 module.exports = {
-  setContextToPending: function(githubRepo, context) {
-    return new Promise(function(resolve, reject) {
-      github.repos.createStatus({
-        user:
-        repo: githubRepo,
-        sha: sha,
-        state: 'pending',
-        target_url: 'FILL THIS IN',
-        description: 'FILL THIS IN',
-        context: context
-      });
-    });
-  }
+    setContextToPending: function(githubRepo, sha, context) {
+        if (!githubRepo || !sha || !context) {
+            return Promise.reject(new Error('Missing args'));
+        }
+        var user = url.parse(githubRepo).path.split('/')[1];
+        var repo = url.parse(githubRepo).path.split('/')[2];
+        return new Promise(function(resolve, reject) {
+            // OAuth2
+            try {
+                github.authenticate({
+                    type: "oauth",
+                    token: process.env.AUTH_TOKEN
+                });
+            } catch (error) {
+                return reject(error);
+            }
+            github.repos.createStatus({
+                user: user,
+                repo: repo,
+                sha: sha,
+                state: 'pending',
+                target_url: 'https://' + 'FILL THIS IN',
+                description: 'FILL THIS IN',
+                context: context
+            }, function(err, res) {
+                if (err) {
+                    return reject(err);
+                } else {
+                    return resolve(res);
+                }
+            });
+        });
+    }
 }

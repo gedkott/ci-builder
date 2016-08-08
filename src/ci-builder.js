@@ -8,7 +8,7 @@ module.exports = {
                 .then(function(data) {
                     var awaiting = [];
                     for (var context in data.contexts) {
-                        awaiting.push(githubApi.setContextToPending(data.githubRepo, context));
+                        awaiting.push(githubApi.setContextToPending(data.githubRepo, data.sha, context));
                     }
                     return Promise.all(awaiting);
                 })

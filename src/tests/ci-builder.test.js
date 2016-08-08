@@ -9,7 +9,8 @@ var contextsManagerMock = {
                 "ci/test-js": "npm test",
                 "ci/build-js": "npm build"
             },
-            "githubRepo": "https://gedalia.kott"
+            "sha": "RANDOM_SHA",
+            "githubRepo": "https://github.com/gedkott/ci-builder"
         });
     })
 };
@@ -20,7 +21,7 @@ var githubApiMock = {
     })
 };
 
-var CiBuilder = proxyquire('../src/ci-builder', {
+var CiBuilder = proxyquire('../ci-builder', {
     './github-api': githubApiMock,
     './contexts-manager': contextsManagerMock
 });
@@ -32,8 +33,8 @@ the corresponding github repo', function(t) {
     t.ok(ciBuilder instanceof Promise, 'ciBuilder should return a promise');
     ciBuilder.then(function() {
         t.ok(contextsManagerMock.load.calledOnce, 'Contexts manager should be called to load data about contexts');
-        t.ok(githubApiMock.setContextToPending.calledWith('https://gedalia.kott', "ci/test-js"), 'Context shoud be set to pending');
-        t.ok(githubApiMock.setContextToPending.calledWith('https://gedalia.kott', "ci/build-js"), 'Context shoud be set to pending');
+        t.ok(githubApiMock.setContextToPending.calledWith("https://github.com/gedkott/ci-builder", "RANDOM_SHA", "ci/test-js"), 'Context shoud be set to pending');
+        t.ok(githubApiMock.setContextToPending.calledWith("https://github.com/gedkott/ci-builder", "RANDOM_SHA", "ci/build-js"), 'Context shoud be set to pending');
         t.ok(githubApiMock.setContextToPending.calledTwice, 'Github api should be called for every context loaded');
         t.end();
     }).catch(function(error) {
